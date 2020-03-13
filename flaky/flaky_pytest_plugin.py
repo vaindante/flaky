@@ -46,6 +46,7 @@ class FlakyPlugin(_FlakyPlugin):
     min_passes = None
     config = None
     _call_infos = {}
+    _PYTEST_WHEN_SETUP = 'setup'
     _PYTEST_WHEN_CALL = 'call'
     _PYTEST_OUTCOME_PASSED = 'passed'
     _PYTEST_OUTCOME_FAILED = 'failed'
@@ -90,7 +91,8 @@ class FlakyPlugin(_FlakyPlugin):
             self.runner.call_and_report = self.call_and_report
             while should_rerun:
                 self.runner.pytest_runtest_protocol(item, nextitem)
-                call_info = self._call_infos.get(item, {}).get(self._PYTEST_WHEN_CALL, None)
+                call_infos.get(item, {})
+                call_info = call_infos.get(self._PYTEST_WHEN_CALL) or call_infos.get(self._PYTEST_WHEN_SETUP)
                 if call_info is None:
                     return False
                 passed = call_info.excinfo is None
